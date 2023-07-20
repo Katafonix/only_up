@@ -11,7 +11,11 @@
       </div>
       <div class="subscribers-list__footer">
         <slot name="footer"></slot>
-        <form-button label="Выйти" @click="close" />
+        <form-button
+          :classButton="'subscribers-button'"
+          label="Выйти"
+          @click="close"
+        />
       </div>
     </div>
   </div>
@@ -68,8 +72,8 @@ export default {
   background: #fff;
   height: 627px;
   box-shadow: 0px 0px 17px 0px rgba(0, 0, 0, 0.5);
-  border-radius: 100px;
-  padding: 40px 42px;
+  border-radius: 26px;
+  padding: 48px 42px;
 }
 
 .subscribers-list__list {
@@ -79,6 +83,9 @@ export default {
   box-shadow: 1px 1px 100px 0px rgba(0, 0, 0, 0.08);
   height: 100%;
   gap: 15px;
+  width: 290px;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 .subscribers-list__header,
@@ -86,5 +93,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.subscribers-list__footer {
+  display: flex;
+  justify-content: center;
+}
+
+.subscribers-button {
+  text-align: center;
 }
 </style>

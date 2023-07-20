@@ -127,4 +127,23 @@ export default {
   flex-direction: row;
   gap: 10px;
 }
+.question__title {
+  color: var(--black-blue, #202430);
+  text-align: justify;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: normal;
+  margin-bottom: 20px;
+}
+.question__list {
+  margin-left: 20px;
+  display: flex;
+  gap: 15px;
+  flex-direction: column;
+  margin-bottom: 5px;
+}
+.question__item button {
+  margin-left: 20px;
+}
 </style>

@@ -1,5 +1,8 @@
 <template>
   <div>
+    <link rel="stylesheet" href="./assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./assets/css/bootstrap-reboot.min.css" />
+    <link rel="stylesheet" href="./assets/css/bootstrap-grid.min.css" />
     <header-element />
     <router-view />
   </div>

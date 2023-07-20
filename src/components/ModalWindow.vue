@@ -2,7 +2,7 @@
   <div class="modalWindow" v-if="isOpen">
     <div class="modalWindow__container">
       <div class="modalWindow__header">
-        <div>{{ title }}</div>
+        <div class="text">{{ title }}</div>
       </div>
       <div class="modalWindow__content">
         <slot name="default"></slot>
@@ -69,7 +69,36 @@ export default {
 .modalWindow__header,
 .modalWindow__footer {
   display: flex;
+  margin: 0 auto;
+  text-align: center;
   align-items: center;
   justify-content: space-between;
+}
+.modalWindow__header .text {
+  margin: 0 auto;
+}
+.modalWindow__footer {
+  gap: 10px;
+}
+.modalWindow__footer .button {
+  width: 100px;
+}
+
+@media (max-width: 578px) {
+  .modalWindow[data-v-20b47706] {
+    z-index: 100;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 95%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+  }
+}
+.modalWindow__content {
+  margin-bottom: 20px;
 }
 </style>

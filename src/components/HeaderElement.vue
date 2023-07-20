@@ -4,7 +4,7 @@
       <nav class="header__menu">
         <div href="" class="header__logo">only apps</div>
         <ul class="header__body">
-          <li class="header__item">
+          <li class="header__item-courses">
             <a
               href=""
               class="header__link"
@@ -12,17 +12,17 @@
               >Курсы</a
             >
           </li>
-          <li class="header__item">
+          <li class="header__item-about">
             <a href="" class="header__link"> О компании</a>
           </li>
-          <li class="header__item">
-            <!-- <div class="header__avatar">
+          <li class="header__item-img">
+            <div class="header__avatar">
               <img
                 class="header__image"
-                src="D:/vue/zxc/src/assets/smesharik.png"
-                alt=""
+                src="https://ulanovka.ru/uploads/old_images/users/21048/y_c24190bctra.jpg"
+                alt="dfsdf"
               />
-            </div> -->
+            </div>
             <a
               class="header__link"
               @click.prevent="$router.push({ name: 'personal' })"
@@ -32,6 +32,26 @@
           </li>
         </ul>
       </nav>
+    </div>
+    <div class="fixed-menu">
+      <ul>
+        <li>
+          <img src="../assets/Home.svg" />
+          <p>Главная</p>
+        </li>
+        <li>
+          <img src="../assets/Course.svg" />
+          <p>Курсы</p>
+        </li>
+        <li>
+          <img src="../assets/Profile.svg" />
+          <p>Профиль</p>
+        </li>
+        <li>
+          <img src="../assets/About.svg" />
+          <p>О нас</p>
+        </li>
+      </ul>
     </div>
   </header>
 </template>
@@ -70,6 +90,7 @@ export default {
 .header__logo {
   flex: 1 1 auto;
   font-size: 22px;
+  white-space: nowrap;
 }
 
 .header__logo::first-letter {
@@ -86,6 +107,7 @@ export default {
   color: #202430;
   font-size: 18px;
   transition: all 0.3s ease 0s;
+  white-space: nowrap;
 }
 
 .header__link:hover {
@@ -103,5 +125,56 @@ header {
 
 nav h2 span {
   color: #4640de;
+}
+.header__image[data-v-85fe3fa2] {
+  width: 100%;
+  height: 50px;
+  border-radius: 100%;
+}
+.header__item-img {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fixed-menu {
+  border: 2px solid #edf6fa;
+  background-color: #fff;
+  width: 100%;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  display: none;
+  bottom: -710%;
+  z-index: 1;
+}
+.fixed-menu ul {
+  display: flex;
+  justify-content: space-between;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.fixed-menu ul li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.fixed-menu ul li img {
+  width: 35px;
+  height: 35px;
+  margin: 0 auto;
+}
+@media (max-width: 778px) {
+  .header__item-courses,
+  .header__item-about {
+    display: none;
+  }
+}
+@media (max-width: 567px) {
+  .fixed-menu {
+    display: flex;
+  }
 }
 </style>

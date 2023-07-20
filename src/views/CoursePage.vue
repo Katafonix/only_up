@@ -3,13 +3,17 @@
     <modal-window ref="courseChanger" title="Изменение курса">
       <template v-slot:default>
         <ValidationObserver ref="observer">
-          <form @submit.prevent method="post">
+          <form @submit.prevent method="post" class="course-form">
             <ValidationProvider
               class="form__validator"
               rules="required"
               v-slot="{ errors }"
             >
-              <form-input v-model.trim="dataSend.name" label="Название" />
+              <form-input
+                v-model.trim="dataSend.name"
+                placeholderInput="Название"
+                label="Название"
+              />
               <span>{{ errors[0] }}</span>
             </ValidationProvider>
             <ValidationProvider
@@ -19,6 +23,7 @@
             >
               <form-input
                 v-model.trim="dataSend.description"
+                placeholderInput="Описание"
                 label="Описание"
               />
               <span>{{ errors[0] }}</span>
@@ -28,13 +33,14 @@
       </template>
       <template v-slot:footer>
         <form-button
+          :class="'courses__button'"
           label="Изменить"
           @click="validateChangeCourse"
           type="submit"
         />
       </template>
     </modal-window>
-    <modal-window ref="imageChanger" title="Изменение картинки">
+    <modal-window ref="ImageChanger" title="Изменение картинки">
       <template v-slot:default>
         <ValidationObserver ref="observer">
           <form @submit.prevent="upload" class="form" method="post">
@@ -79,11 +85,7 @@
         </ValidationObserver>
       </template>
       <template v-slot:footer>
-        <form-button
-          label="Создать"
-          @click="validateCreateTask"
-          type="submit"
-        />
+        <form-button label="Создать" @click="validate" type="submit" />
       </template>
     </modal-window>
     <subscribers-list :subscribers="subscribers" ref="subList" />
@@ -99,50 +101,13 @@
         </div>
         <div class="info__logo">
           <img class="info__image" :src="imageUrl" alt="" />
-          <a
-            v-if="getUser.role != USER"
-            @click.prevent="$refs.imageChanger.open()"
-            href="#"
-            class="editor"
-          >
+          <a @click.prevent="$refs.ImageChanger.open()" href="#" class="editor">
             <img class="info__image-editor" src="../assets/pencil.svg" alt="" />
           </a>
         </div>
       </div>
     </div>
-    <div class="main">
-      <form-button
-        v-if="!isSubscriber && getUser.role === `USER`"
-        class="courses__button"
-        @click="subscribe"
-        label="Подписаться"
-      />
-      <!-- <form-button
-        v-if="isSubscriber"
-        class="courses__button"
-        @click="subscribe"
-        label="Начать обучение"
-      /> -->
-      <form-button
-        v-if="getUser.role === `ADMIN`"
-        class="courses__button"
-        :course-id="course.id"
-        @click="selectCourse(course)"
-        label="Изменить"
-      />
-      <form-button
-        v-if="getUser.role != `USER`"
-        class="courses__button"
-        @click="$refs.taskCreator.open()"
-        label="Создать задание"
-      />
-      <form-button
-        v-if="getUser.role === `ADMIN`"
-        class="courses__button"
-        @click="$refs.subList.open()"
-        label="Список подписчиков"
-      />
-    </div>
+
     <section class="course-elements">
       <div class="course-elements__container">
         <div class="row">
@@ -167,6 +132,40 @@
         </div>
       </div>
     </section>
+    <div class="main">
+      <form-button
+        v-if="!isSubscriber"
+        class="courses__button"
+        @click="subscribe"
+        label="Подписаться"
+      />
+      <!-- <form-button
+        v-if="isSubscriber"
+        class="courses__button"
+        @click="subscribe"
+        label="Начать обучение"
+      /> -->
+      <form-button
+        v-if="getUser.role === `ADMIN`"
+        class="courses__button"
+        :class="courses__button"
+        :course-id="course.id"
+        @click="selectCourse(course)"
+        label="Изменить"
+      />
+      <form-button
+        v-if="getUser.role === `ADMIN`"
+        class="courses__button"
+        @click="$refs.taskCreator.open()"
+        label="Создать задание"
+      />
+      <form-button
+        v-if="getUser.role === `ADMIN`"
+        class="courses__button"
+        @click="$refs.subList.open()"
+        label="Список подписчиков"
+      />
+    </div>
     <div class="teachers">
       <div class="container">
         <div class="row">
@@ -227,7 +226,7 @@ export default {
     };
   },
   async mounted() {
-    this.imageUrl = this.getImageUrl(this.$attrs.courseId);
+    this.imageUrl = this.getCourseImageUrl(this.$attrs.courseId);
     this.course = await this.getCourse();
     this.subscribers = await this.getCourseInfo();
     this.isSubscriber = await this.getSubscriber();
@@ -252,7 +251,7 @@ export default {
       this.FILE = null;
       this.$refs.courseChanger.close();
     },
-    getImageUrl(id) {
+    getCourseImageUrl(id) {
       return `${process.env.VUE_APP_BACKEND_URL}photo/${id}`;
     },
     async getCourse() {
@@ -284,10 +283,9 @@ export default {
       try {
         const response = await this.sendRequest({
           request: "GET",
-          url: `discipline-info/subscribe/${this.$attrs.courseId}`,
+          url: `discipline-info/subscribe/subject/${this.$attrs.courseId}`,
         });
-        if (!response.ok) throw new Error("Не удалось подписаться на курс");
-        this.isSubscriber = await this.getSubscriber();
+        if (response.ok) this.isSubscriber = await this.getSubscriber();
       } catch (error) {
         console.log(error);
       }
@@ -334,8 +332,8 @@ export default {
         );
 
         if (response.ok) {
-          this.imageUrl = this.getImageUrl(this.$attrs.courseId);
-          this.$attrs.imageChanger.close();
+          this.imageUrl = this.getCourseImageUrl(this.$attrs.courseId);
+          console.log(response);
         } else {
           throw new Error("Ошибка при загрузке файла.");
         }
@@ -354,7 +352,7 @@ export default {
 
         if (response.ok) {
           this.getCourse();
-          this.$refs.courseChanger.close();
+          console.log(response);
         } else {
           throw new Error("Ошибка при загрузке файла.");
         }
@@ -363,7 +361,7 @@ export default {
         this.error = error;
       }
     },
-    async validateCreateTask() {
+    async validate() {
       const success = await this.$refs.observer.validate();
       if (success) this.createTask();
     },
@@ -378,7 +376,7 @@ export default {
             id_subject: Number(this.dataSend.id_subject),
           },
         });
-        if (response.ok) this.$refs.taskCreator.close();
+        console.log(response);
       } catch (error) {
         console.log(error);
       }
@@ -403,6 +401,7 @@ export default {
   background-color: #82dbda;
   border-radius: 0px 0px 100px 100px;
   padding: 47px 0px;
+  margin-bottom: 10px;
 }
 
 .info__container {
@@ -413,7 +412,6 @@ export default {
 }
 .info__name {
   color: #202430;
-  font-family: Gadugi;
   font-size: 30px;
   font-weight: 700;
   line-height: 40px;
@@ -421,7 +419,7 @@ export default {
 }
 .info__description {
   color: #202430;
-  font-family: Gadugi;
+  max-width: 610px;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
@@ -524,10 +522,9 @@ export default {
 .course__teacher__name {
   text-align: center;
   color: #000;
-  font-family: Gadugi;
   font-size: 18px;
   font-style: normal;
-  font-weight: 700;
+  font-weight: bold;
   line-height: normal;
   margin-bottom: 15px;
 }
@@ -540,8 +537,75 @@ export default {
   font-weight: 400;
   line-height: normal;
 }
-
+.subtitle {
+  padding-left: 20px;
+}
+.subtitle h2 {
+  font-weight: 400px;
+  text-decoration: bold;
+  font-weight: bold;
+  font-size: 20px;
+}
 .courses__button {
   display: block;
+}
+.course-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.main {
+  display: flex;
+  width: 50%;
+  margin: 0 auto;
+  justify-content: space-between;
+  align-items: center;
+}
+.teachers {
+  padding: 90px 0;
+  background: var(--light-blue, #edf6fa);
+}
+
+@media (max-width: 1200px) {
+  .main {
+    width: 80%;
+  }
+}
+
+@media (max-width: 991px) {
+  .main {
+    width: 80%;
+  }
+  button[data-v-7d061c46] {
+    padding: 13px 10px;
+  }
+  .info__body[data-v-4b28ae04] {
+    width: 25%;
+  }
+}
+
+@media (max-width: 768px) {
+  .main {
+    width: 90%;
+  }
+  .info {
+    border-radius: 0;
+  }
+}
+@media (max-width: 575px) {
+  .subtitle h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .main {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .courses__button[data-v-4b28ae04] {
+    margin: 0 auto;
+    padding: 0px 10px;
+  }
 }
 </style>

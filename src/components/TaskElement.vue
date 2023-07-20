@@ -1,7 +1,7 @@
 <template>
   <div class="task" @click="click">
     <div class="task__title">
-      {{ task.title }}
+      {{ task.Title }}
       {{ task.description }}
     </div>
     <div @click.stop="clickEditor" class="course-element__editor">
@@ -11,14 +11,12 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
 export default {
   components: {},
   props: {
     task: Object,
   },
   methods: {
-    ...mapActions("mAuth", ["getUser"]),
     click() {
       this.$emit("click");
     },

@@ -19,11 +19,7 @@
         </ValidationObserver>
       </template>
       <template v-slot:footer>
-        <form-button
-          label="Создать"
-          @click="validateSetQuestion"
-          type="submit"
-        />
+        <form-button label="Создать" @click="validate" type="submit" />
       </template>
     </modal-window>
     <div class="task-editor__container">
@@ -111,12 +107,13 @@ export default {
           request: "GET",
           url: `question/from-task/${this.$attrs.taskId}`,
         });
+        if (!response.ok) throw new Error("Ошибка при получении курса");
         return await response.json();
       } catch (error) {
         console.log(error);
       }
     },
-    async validateSetQuestion() {
+    async validate() {
       const success = await this.$refs.observer.validate();
       if (success) await this.setQuestion();
       this.questions = await this.getQuestions();

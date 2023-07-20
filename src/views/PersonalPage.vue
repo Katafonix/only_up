@@ -16,10 +16,7 @@
               rules="required"
               v-slot="{ errors }"
             >
-              <form-input
-                v-model.trim="dataSend.name"
-                placeholderInput="Название"
-              />
+              <form-input v-model.trim="dataSend.name" label="Название" />
               <span>{{ errors[0] }}</span>
             </ValidationProvider>
             <ValidationProvider
@@ -29,7 +26,7 @@
             >
               <form-input
                 v-model.trim="dataSend.description"
-                placeholderInput="Описание"
+                label="Описание"
               />
               <span>{{ errors[0] }}</span>
             </ValidationProvider>
@@ -38,10 +35,7 @@
               rules="required"
               v-slot="{ errors }"
             >
-              <form-input
-                v-model.trim="dataSend.deadline"
-                placeholderInput="Дедлайн"
-              />
+              <form-input v-model.trim="dataSend.deadline" label="Описание" />
               <span>{{ errors[0] }}</span>
             </ValidationProvider>
             <p v-if="error" class="form__error-message">{{ error }}</p>
@@ -49,42 +43,24 @@
         </ValidationObserver>
       </template>
       <template v-slot:footer>
-        <form-button
-          label="Создать"
-          @click="validateCreateCourse"
-          type="submit"
-        />
-      </template>
-    </modal-window>
-    <modal-window ref="imageChanger" title="Изменение картинки">
-      <template v-slot:default>
-        <ValidationObserver ref="observer">
-          <form @submit.prevent="upload" class="form" method="post">
-            <ValidationProvider class="form__validator">
-              <input-file @handleFileChange="handleFileChange" />
-            </ValidationProvider>
-          </form>
-        </ValidationObserver>
-      </template>
-      <template v-slot:footer>
-        <form-button label="Готово" @click="setAvatar" type="submit" />
+        <form-button label="Создать" @click="validateAndCreate" type="submit" />
       </template>
     </modal-window>
     <div class="personal__container">
       <div class="main">
         <div class="information">
           <div class="information__avatar">
-            <img class="information__image" :src="imageUrl" alt="" />
-            <a
-              @click.prevent="$refs.imageChanger.open()"
-              href="#"
-              class="editor-image"
-            >
+            <img
+              class="information__image"
+              src="../assets/smesharik.png"
+              alt=""
+            />
+            <a href="#" class="editor-image">
               <img class="personal__image" src="../assets/pencil.svg" alt="" />
             </a>
           </div>
           <div class="information__name">{{ user.name }}</div>
-          <div class="information__registration-date">{{ date }}</div>
+          <div class="information__registration-date">24/42/3</div>
           <div class="information__fields">
             <form-input
               :readonly="true"
@@ -158,25 +134,19 @@ export default {
         description: "",
         deadline: "",
       },
-      date: null,
       subscriptions: [],
       FILE: null,
-      imageUrl: null,
+      previewImage: null,
     };
   },
   async mounted() {
     this.subscriptions = await this.getSubscriptions();
     console.log(this.subscriptions);
-    this.imageUrl = await this.getAvatar();
-    this.date = await this.getDate();
   },
   computed: {
     ...mapGetters("mAuth", ["getUser"]),
     user() {
       return this.getUser;
-    },
-    formatedData() {
-      return this.date.to;
     },
   },
   methods: {
@@ -185,14 +155,11 @@ export default {
       this.name = "";
       this.description = "";
       this.FILE = null;
+      this.$refs.courseCreator.close();
     },
-    async validateCreateCourse() {
+    async validateAndCreate() {
       const success = await this.$refs.observer.validate();
-      if (success && this.FILE) this.createCourseAndCloseModal();
-    },
-    async validateChangeAvatar() {
-      const success = await this.$refs.observer.validate();
-      if (success && this.FILE) this.uploadImage(this.FILE);
+      if (success && this.FILE) this.upload(this.dataSend, this.FILE);
     },
     async upload(dataSend, FILE, id = null) {
       try {
@@ -205,24 +172,19 @@ export default {
           const courseId = await courseData.json();
           id = courseId.id;
         } else await this.sendRequest("PATCH", `subjects/${id}`, dataSend);
-        await this.uploadImage(FILE, id);
-      } catch (error) {
-        console.error(error);
-        this.error = error;
-      }
-    },
-    async uploadImage(FILE, id = null) {
-      try {
+
         const response = await fetch(
           `${process.env.VUE_APP_BACKEND_URL}photo/upload/${id}`,
           {
             method: "POST",
             credentials: "include",
+            headers: {},
             body: FILE,
           }
         );
 
         if (response.ok) {
+          this.$refs.courseCreator.close();
           console.log(response);
         } else {
           throw new Error("Ошибка при загрузке файла.");
@@ -232,27 +194,7 @@ export default {
         this.error = error;
       }
     },
-    async setAvatar() {
-      try {
-        const response = await fetch(
-          `${process.env.VUE_APP_BACKEND_URL}users/avatar`,
-          {
-            method: "POST",
-            credentials: "include",
-            body: this.FILE,
-          }
-        );
 
-        if (response.ok) {
-          console.log(response);
-        } else {
-          throw new Error("Ошибка при загрузке файла.");
-        }
-      } catch (error) {
-        console.error(error);
-        this.error = error;
-      }
-    },
     async getSubscriptions() {
       try {
         const response = await this.sendRequest({
@@ -266,43 +208,8 @@ export default {
         console.log(error);
       }
     },
-    async getAvatar() {
-      try {
-        const response = await this.sendRequest({
-          request: "GET",
-          url: `users/get/avatar`,
-        });
-        if (response.ok) {
-          return await response.text();
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    },
     handleFileChange(data) {
       this.FILE = data;
-    },
-    async createCourseAndCloseModal() {
-      try {
-        await this.upload(this.dataSend, this.FILE);
-        this.$refs.courseCreator.close();
-      } catch (error) {
-        console.error(error);
-        this.error = "Ошибка при создании курса.";
-      }
-    },
-    async getDate() {
-      try {
-        const response = await this.sendRequest({
-          request: "GET",
-          url: `users/get-date/formated`,
-        });
-        if (response.ok) {
-          return await response.json();
-        }
-      } catch (error) {
-        console.log(error);
-      }
     },
   },
 };
@@ -310,7 +217,7 @@ export default {
 
 <style scoped>
 .personal {
-  padding: 60px 0px;
+  padding: 74px 0px;
 }
 .personal__container {
   display: flex;
@@ -328,7 +235,7 @@ export default {
   align-items: center;
   margin-right: 50px;
   padding: 40px 42px;
-  border-radius: 100px;
+  border-radius: 50px;
   background: rgba(255, 255, 255, 0.5);
   box-shadow: 1px 1px 100px 0px rgba(0, 0, 0, 0.08);
 }
@@ -390,7 +297,7 @@ export default {
   display: flex;
   padding: 40px 74px 68px 75px;
   justify-content: center;
-  border-radius: 100px;
+  border-radius: 50px;
   background-color: #fff;
   box-shadow: 1px 1px 100px 0px rgba(0, 0, 0, 0.08);
   max-width: 581px;
@@ -411,5 +318,15 @@ export default {
 }
 .personal__img {
   width: 100%;
+}
+@media (max-width: 767px) {
+  .information {
+    margin-right: 0;
+  }
+  .personal__container .main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
 }
 </style>
