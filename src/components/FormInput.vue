@@ -1,5 +1,6 @@
 <template>
   <div class="form-input">
+    <label>{{ label }}</label>
     <input
       class="form-input__input"
       :readonly="readonly"
@@ -58,6 +59,7 @@ export default {
 <style scoped>
 .form-input {
   display: flex;
+  flex-direction: column;
   max-width: 300px;
 }
 .form-input__input {

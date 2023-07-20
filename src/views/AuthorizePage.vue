@@ -61,7 +61,17 @@
               </form>
             </ValidationObserver>
           </div>
+
           <div class="authorization-block__footer">
+            <p class="register_text">
+              Ещё нет аккаунта?
+              <a
+                class="register_act"
+                href="#"
+                @click.prevent="$router.push({ name: `registration` })"
+                >Зарегистрируйтесь</a
+              >
+            </p>
             <form-button
               class="authorization-block__button"
               classButton="button__blue-white button_auth"
@@ -210,7 +220,57 @@ export default {
 .authorization-block__button {
   margin: 0px 0px 10px 0px;
 }
-.forget_pass {
-  color: rgba(32, 36, 48, 0.5);
+.register_text {
+  display: none;
+}
+.forget_pass,
+forget_pass-1 {
+  color: var(--black-blue-50, #202430);
+  text-align: center;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+}
+button[data-v-7d061c46] {
+  padding: 13px 69px;
+}
+@media (max-width: 991px) {
+  .authorization__body {
+    display: flex;
+    flex-direction: column;
+  }
+  .registration-block {
+    border-radius: 100px 100px 0 0;
+    flex: 0 1 130px;
+    height: 660px;
+    padding: 31px;
+    width: 100%;
+  }
+  .authorization-block {
+    justify-content: center;
+    align-items: center;
+    height: 378px;
+    flex: 1 1 auto;
+  }
+}
+@media (max-width: 558px) {
+  .registration-block {
+    display: none;
+  }
+  .authorization__body {
+    background: none;
+    box-shadow: none;
+  }
+  .authorization-block__footer {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .forget_pass {
+    float: right;
+    transform: translate(40px, -40px);
+  }
+  .register_text {
+    display: block;
+  }
 }
 </style>

@@ -7,7 +7,7 @@
       <template v-slot:footer>
         <form-button
           label="Заебись"
-          @click="$router.push({ name: `task` })"
+          @click="$refs.mark.close()"
           type="submit"
         />
       </template>
@@ -105,6 +105,7 @@ export default {
       this.studentMark = await this.getStudentMark();
       this.totalMark = await this.getTotalMark();
       this.$refs.mark.open();
+      this.$router.push({ name: "course" });
     },
   },
 };
@@ -116,10 +117,16 @@ export default {
 }
 
 .test__container {
+  position: relative;
 }
 .row {
 }
-.test__title {
+.test__title h1 {
+  color: var(--black-blue, #202430);
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
 }
 .test__questions {
   display: flex;
@@ -138,12 +145,9 @@ export default {
 .question__title {
   color: var(--black-blue, #202430);
   text-align: justify;
-  font-family: Gadugi;
   font-size: 18px;
-  font-style: normal;
-  font-weight: 700;
+  font-weight: bold;
   line-height: normal;
-  margin-bottom: 20px;
 }
 .question input {
   margin-left: 40px;
@@ -159,11 +163,11 @@ export default {
 }
 .test__title {
   color: var(--black-blue, #202430);
-  font-family: Gadugi;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  margin-bottom: 20px;
 }
 input[type="radio"]:checked + label,
 input[type="checkbox"]:checked + label {
@@ -204,7 +208,10 @@ input[type="checkbox"]:checked + label {
   align-items: center;
   border-radius: 100px;
   background: var(--cta, #4640de);
+  width: 224px;
   color: #fff;
   cursor: pointer;
+  position: absolute;
+  right: 10px;
 }
 </style>

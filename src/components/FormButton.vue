@@ -43,6 +43,18 @@ button {
   transition: all 0.3s ease 0s;
 }
 
+@media (max-width: 1380px) {
+  button {
+    padding: 13px 40px;
+  }
+}
+
+@media (max-width: 660px) {
+  button {
+    padding: 13px 30px;
+  }
+}
+
 button:hover {
   background-color: #312bdd;
 }

@@ -29,7 +29,7 @@ export default {
   padding: 5px;
   background-color: #e9e2e2;
   box-shadow: 1px 1px 200px 9px rgba(0, 0, 0, 0.06);
-  border-radius: 40px;
+  border-radius: 10px;
   justify-content: space-between;
   gap: 15px;
 }

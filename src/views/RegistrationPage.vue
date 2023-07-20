@@ -97,6 +97,15 @@
             classButton="button_white"
           />
         </div>
+        <p class="account-text">
+          Уже есть аккаунт?
+          <a
+            class="account-act"
+            href="#"
+            @click.prevent="$router.push({ name: `authorization` })"
+            >Войдите</a
+          >
+        </p>
       </div>
     </div>
   </div>
@@ -136,6 +145,9 @@ export default {
 </script>
 
 <style scoped>
+.account-text {
+  display: none;
+}
 .registration {
   padding: 110px 0px;
 }
@@ -203,7 +215,7 @@ export default {
 }
 
 .registration-block__subtitle {
-  font-size: 30px;
+  font-size: 20px;
   line-height: 27px;
   font-weight: 700;
   margin: 0px 0px 10px 0px;
@@ -234,5 +246,45 @@ export default {
 }
 .registration-block__button {
   margin: 0px 0px 23px 0px;
+}
+@media (max-width: 991px) {
+  .registration__body[data-v-62d251bc] {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .registration__body[data-v-62d251bc] {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+  .authorization-block {
+    border-radius: 100px 100px 0 0;
+    flex: 0 1 130px;
+    height: 660px;
+    padding: 31px;
+    width: 100%;
+  }
+  .registration-block {
+    justify-content: center;
+    align-items: center;
+    height: 497px;
+    flex: 1 1 auto;
+  }
+}
+@media (max-width: 558px) {
+  .authorization-block {
+    display: none;
+  }
+  .registration__body {
+    background: none;
+    box-shadow: none;
+  }
+  .account-text {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .account-text {
+    display: block;
+  }
 }
 </style>

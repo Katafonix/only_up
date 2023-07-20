@@ -76,7 +76,7 @@
               v-for="course in courses"
               :key="course.id"
               :course="course"
-              :imageUrl="getImageUrl(course.id)"
+              :imageUrl="getCourseImageUrl(course.id)"
               @click="
                 $router.push({
                   name: 'course',
@@ -152,7 +152,7 @@ export default {
         console.log(error);
       }
     },
-    getImageUrl(id) {
+    getCourseImageUrl(id) {
       return `${process.env.VUE_APP_BACKEND_URL}photo/${id}`;
     },
   },
@@ -169,6 +169,7 @@ export default {
   background: #edf6fa;
 }
 .main__container {
+  width: 80%;
 }
 .main__content {
 }
